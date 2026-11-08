@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "homogenization"
+version = "1.0.0"
+description = "First-order periodic homogenization of heat conduction in perforated plates, validated against DNS (FEniCSx)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+# FEniCSx (dolfinx, dolfinx_mpc, petsc4py, mpi4py) and gmsh come from conda-forge, see environment.yml
+dependencies = ["numpy", "matplotlib"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: solves small FEM problems (a few seconds each)"]

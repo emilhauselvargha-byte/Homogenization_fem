@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+# solver exports (ParaView)
+output/
+*.xdmf
+*.h5
+*.vtk
+*.pvd
+*.msh
+# LaTeX build artefacts
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.lof
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+.DS_Store
+report/*.pdf
+report/*.lot
+report/*.bbl
+report/*.blg
+.vscode/
+figures/diagrams/*.aux
+figures/diagrams/*.log
+figures/diagrams/*.pdf
