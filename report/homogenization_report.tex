@@ -141,6 +141,7 @@ govern the physics throughout the study.
 
 \FloatBarrier
 \subsection{Equation domain and boundary conditions}
+\label{sec:domain}
 
 In order for the problem to be well posed, one must put into place the
 boundary conditions. The case of interest is when the domain has periodic
@@ -183,27 +184,10 @@ the computations, is shown in Fig.~\ref{fig:perforated_rectangle}.
 \end{figure}
 
 One could extend the study to three dimensions, in which case the domain would
-resemble the one in Fig.~\ref{fig:perforated_cube}. A slice of the direct numerical solve for a simple 10 by 10 case can be seen in Fig.~\ref{fig:cube_temperature}. The cube is sliced to reveal the temperature inside it. Perforating a cube with simple parallel cylinders is, by symmetry, exactly equivalent to completing a simpler 2D study of the perpendicular cross-section, which is what is done here; reducing dimensions substantially reduces computational costs. It would be interesting, however, to
+resemble the one shown in Fig.~\ref{fig:perforated_cube}, in the appendix. A slice of the direct numerical solve for a simple 10 by 10 case can be seen in Fig.~\ref{fig:cube_temperature}. The cube is sliced to reveal the temperature inside it, which varies across the cylinders but not along them. Perforating a cube with simple parallel cylinders is, by symmetry, exactly equivalent to completing a simpler 2D study of the perpendicular cross-section, which is what is done here; reducing dimensions substantially reduces computational costs. It would be interesting, however, to
 study the effect of rotating or curving the inclusions on the effective
 conductivity tensor. One might ask if any $\kappa^{\star}$ can be attained by
 playing with the geometry.
-
-\begin{figure}[h]
-  \centering\includegraphics[width=0.55\textwidth]{perforated_cube_mesh.pdf}
-  \caption{3D cube perforated by $3 \times 3$ cylinders, illustrating a
-  possible extension of the study into three dimensions, opened in Gmsh to
-  show the mesh. Unlike the two-dimensional computations, this mesh, like the
-  three-dimensional solve of Fig.~\ref{fig:cube_temperature}, uses first-order,
-  straight-edged elements, and it plays no part in the convergence study.}
-  \label{fig:perforated_cube}
-\end{figure}
-
-\begin{figure}[h]
-  \centering\includegraphics[width=0.55\textwidth]{cube_temperature_slice.pdf}
-  \caption{A slice of the temperature field obtained when solving the DNS
-  problem on the perforated cube of Fig.~\ref{fig:perforated_cube}.}
-  \label{fig:cube_temperature}
-\end{figure}
 
 \FloatBarrier
 \subsection{Variational form}
@@ -609,9 +593,10 @@ to machine precision.
 \FloatBarrier
 \subsubsection{Effective conductivity and perforation shapes}
 
-Figures~\ref{fig:temp_circle} and~\ref{fig:temp_ellipse} show the temperature
-field obtained from a single unit cell problem, together with the local heat
-flux, for a circular and an elliptical inclusion respectively. In both cases
+Figure~\ref{fig:cell_fields} shows the temperature field obtained from a single
+unit cell problem, together with the local heat flux, for a circular and an
+elliptical inclusion, and Figs.~\ref{fig:temp_circle} and~\ref{fig:temp_ellipse},
+in the appendix, show the corresponding fields over a whole perforated plate. In both cases
 the flux visibly bends around the inclusion, as the zero-flux condition of
 Eq.~\eqref{eq:cell_problem} requires, since no heat can cross into the hole and
 the flux must therefore remain tangent to its boundary. For the circular
@@ -620,55 +605,6 @@ precision, with $\kappa^{\star}_{11} = \kappa^{\star}_{22}$ and
 $\kappa^{\star}_{12} = 0$, as expected from the four-fold rotational symmetry of a
 circle in a square cell: no direction is geometrically preferred, so none can
 be preferred by the effective conductivity either.
-
-\begin{figure}[h]
-  \centering\includegraphics[width=0.6\textwidth]{temperature_circle.pdf}
-  \caption{Temperature field for circular perforations, with arrows showing
-  the local heat flux. Cell parameters: $\kappa^{\star} =
-  \begin{pmatrix} 0.5585 & \approx 0 \\ \approx 0 & 0.5585 \end{pmatrix}$,
-  $\kappa_{\tmop{solid}} = 1.0$, hole radius $= 0.3$ (circular), $10$ holes
-  per side, macroscopic domain $L_1 = L_2 = 1.0$, $\varepsilon = L_1 / 10$. As expected for a circular inclusion, the
-  tensor is isotropic and diagonal to within numerical precision.}
-  \label{fig:temp_circle}
-\end{figure}
-
-\begin{figure}[h]
-  \centering\includegraphics[width=0.6\textwidth]{temperature_ellipse.pdf}
-  \caption{Temperature field for elliptical perforations, with arrows
-  showing the local heat flux. Cell parameters: $\kappa^{\star} =
-  \begin{pmatrix} 0.5852 & 0.1205 \\ 0.1205 & 0.6863 \end{pmatrix}$,
-  $\kappa_{\tmop{solid}} = 1.0$, ellipse semi-axes $a = 0.4$, $b = 0.15$,
-  rotation $55^{\circ}$, $10$ holes per side, macroscopic domain $L_1 = L_2
-  = 1.0$, $\varepsilon = L_1 / 10$. The
-  magnitude of the flux is greatest near the tips of the ellipse's major
-  axis, where the heat is forced to curve most sharply around the
-  inclusion.}
-  \label{fig:temp_ellipse}
-\end{figure}
-
-Elongating the inclusion into an ellipse breaks this symmetry and makes the
-anisotropy directly visible. Done naively, elongation changes two things at
-once, because at fixed semi-axis $a$ a thinner ellipse is also a smaller hole,
-which lowers the porosity and lets every direction conduct better. To isolate
-the effect of shape, Fig.~\ref{fig:aspect_sweep} varies the aspect ratio $b/a$
-of an axis-aligned ellipse at constant hole area $ab = 0.06$, that is, at
-constant porosity. The expected trade-off then appears cleanly. Heat is
-increasingly free to travel along the elongated axis, with $\kappa^{\star}_{11}$
-rising from $0.683$ to $0.790$, and increasingly obstructed across it, with
-$\kappa^{\star}_{22}$ falling to $0.348$, steeply so once the gap between
-neighbouring holes becomes narrow. The corresponding cell fields are shown in
-Fig.~\ref{fig:cell_fields}.
-
-\begin{figure}[h]
-  \centering\includegraphics[width=0.6\textwidth]{ellipse_aspect_sweep.png}
-  \caption{Effective conductivity entries $\kappa^{\star}_{11}$ and
-  $\kappa^{\star}_{22}$ of an axis-aligned ellipse as a function of its aspect
-  ratio $b/a$ ($1.0$ is a circle), at constant hole area $ab = 0.06$ (constant
-  porosity), which isolates the effect of shape. $\kappa^{\star}_{11}$ rises and
-  $\kappa^{\star}_{22}$ falls as the ellipse is elongated in direction $1$. Generated by
-  \texttt{scripts/02\_ellipse\_sweeps.py}.}
-  \label{fig:aspect_sweep}
-\end{figure}
 
 \begin{figure}[h]
   \centering\includegraphics[width=\textwidth]{cell_fields.png}
@@ -681,10 +617,43 @@ Fig.~\ref{fig:cell_fields}.
   \label{fig:cell_fields}
 \end{figure}
 
+Elongating the inclusion into an ellipse breaks this symmetry and makes the
+anisotropy directly visible. Done naively, elongation changes two things at
+once, because at fixed semi-axis $a$ a thinner ellipse is also a smaller hole,
+which lowers the porosity and lets every direction conduct better. To isolate
+the effect of shape, Fig.~\ref{fig:ellipse_sweeps}(a) varies the aspect ratio $b/a$
+of an axis-aligned ellipse at constant hole area $ab = 0.06$, that is, at
+constant porosity. The expected trade-off then appears cleanly. Heat is
+increasingly free to travel along the elongated axis, with $\kappa^{\star}_{11}$
+rising from $0.68$ to $0.79$, and increasingly obstructed across it, with
+$\kappa^{\star}_{22}$ falling to $0.35$, steeply so once the gap between
+neighbouring holes becomes narrow.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}{0.49\textwidth}\centering
+    \includegraphics[width=\textwidth]{ellipse_aspect_sweep.png}\\ (a)
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\textwidth}\centering
+    \includegraphics[width=\textwidth]{ellipse_rotation_sweep.png}\\ (b)
+  \end{minipage}
+  \caption{Effective conductivity tensor of an elliptical hole as its shape
+  changes. (a) Entries $\kappa^{\star}_{11}$ and $\kappa^{\star}_{22}$ of an
+  axis-aligned ellipse as a function of its aspect ratio $b/a$, at constant hole
+  area $ab = 0.06$ and hence constant porosity, $b/a = 1$ being a circle.
+  $\kappa^{\star}_{11}$ rises and $\kappa^{\star}_{22}$ falls as the ellipse is
+  elongated in direction $1$. (b) The three independent entries as a function of
+  the rotation angle of the ellipse, at the fixed aspect ratio $b/a = 0.3$ with
+  $a = 0.3$. Rotating the ellipse away from the coordinate axes generates a non-zero
+  off-diagonal entry, as the imposed gradient is increasingly deflected off-axis by
+  the tilted inclusion. Generated by \texttt{scripts/02\_ellipse\_sweeps.py}.}
+  \label{fig:ellipse_sweeps}
+\end{figure}
+
 An axis-aligned ellipse still possesses mirror symmetry about both coordinate
 axes, however, so $\kappa^{\star}_{12}$ remains zero whatever its aspect ratio,
 and breaking this remaining symmetry requires rotating the ellipse.
-Figure~\ref{fig:rotation_sweep} follows the three independent entries of
+Figure~\ref{fig:ellipse_sweeps}(b) follows the three independent entries of
 $\kappa^{\star}$ as a fixed, elongated ellipse is rotated from $0^{\circ}$ to
 $90^{\circ}$. The off-diagonal entry vanishes at the two axis-aligned extremes
 and is largest near $45^{\circ}$, where the principal axis of the inclusion is
@@ -697,17 +666,6 @@ holes, for which $\kappa^{\star}_{11}$ and $\kappa^{\star}_{22}$ swap while
 $\kappa^{\star}_{12}$ is unchanged. Throughout, the measured asymmetry
 $| \kappa^{\star}_{12} - \kappa^{\star}_{21} |$ stays at the level of machine
 precision, around $10^{-15}$, as the symmetry argument above requires.
-
-\begin{figure}[h]
-  \centering\includegraphics[width=0.6\textwidth]{ellipse_rotation_sweep.png}
-  \caption{Effective conductivity tensor entries as a function of the
-  ellipse's rotation angle (degrees), at a fixed aspect ratio $b/a = 0.3$
-  ($a = 0.3$). Rotating the ellipse away from the coordinate axes generates
-  non-zero off-diagonal entries in $\kappa^{\star}$, as the imposed gradient is
-  increasingly deflected off-axis by the tilted inclusion. Generated by
-  \texttt{scripts/02\_ellipse\_sweeps.py}.}
-  \label{fig:rotation_sweep}
-\end{figure}
 
 \FloatBarrier
 \subsection{First order approximation}
@@ -828,7 +786,7 @@ top and bottom edges: it is the \emph{exact} solution of the DNS problem, and
 any measured difference is FEM error. We therefore use a rotated ellipse,
 $a = 0.3$, $b = 0.12$, rotated by $40^{\circ}$, for which
 \[
-\kappa^{\star} = \begin{pmatrix} 0.779840 & 0.087040 \\ 0.087040 & 0.747382 \end{pmatrix}.
+\kappa^{\star} \approx \begin{pmatrix} 0.78 & 0.09 \\ 0.09 & 0.75 \end{pmatrix}.
 \]
 Because $\kappa^{\star}_{12} \neq 0$, the insulated top and bottom edges now
 require $\kappa^{\star}_{21} \partial T / \partial x_1 + \kappa^{\star}_{22} \partial T / \partial x_2 = 0$, so $T$
@@ -1023,7 +981,7 @@ This is the central quantitative result of the study. It is what the
 asymptotic expansion of Eq.~\eqref{eq:twoscale_ansatz} predicts: the first
 neglected term is of the form $\varepsilon^2 \chi_{ij}(\{x/\varepsilon\})\, \partial_i
 \partial_j T$, with second-order correctors $\chi_{ij}$, and it is non-zero here
-because $T$ is curved. At the smallest cell size, $\varepsilon = 0.067$, the
+because $T$ is curved. At the smallest cell size, $\varepsilon = 0.8/12 \approx 0.07$, the
 reconstruction is about $200$ times more accurate than $T$ alone ($2.0 \times 10^{-5}$
 against $4.2 \times 10^{-3}$, for a temperature varying between $0$ and $1$).
 
@@ -1175,6 +1133,56 @@ and increased mesh cost; Figures~\ref{fig:perforated_cube}
 and~\ref{fig:cube_temperature} illustrate the geometry such a study would
 require.
 
+\clearpage
+\appendix
+\section{Additional renderings}
+
+This appendix collects renderings, made with Gmsh and ParaView, that illustrate the
+study without being needed for its argument. The three-dimensional ones accompany the
+discussion of Section~\ref{sec:domain}, and the plate solutions complement the single-cell
+fields of Fig.~\ref{fig:cell_fields}.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}\centering
+    \includegraphics[width=0.85\textwidth]{perforated_cube_mesh.pdf}
+    \caption{Mesh of a cube perforated by $3 \times 3$ parallel cylinders,
+    opened in Gmsh, with first-order elements.}
+    \label{fig:perforated_cube}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}\centering
+    \includegraphics[width=\textwidth]{cube_temperature_slice.pdf}
+    \caption{Temperature field on a cube perforated by $10 \times 10$
+    parallel cylinders, cut open to show its inside. The temperature varies across the
+    cylinders but not along them.}
+    \label{fig:cube_temperature}
+  \end{minipage}
+
+  \vspace{1.5em}
+  \begin{minipage}[t]{0.48\textwidth}\centering
+    \includegraphics[width=\textwidth]{temperature_circle.pdf}
+    \caption{Temperature field and local heat flux, shown by arrows, over a
+    whole plate perforated by circular holes. Parameters are $\kappa_{\tmop{solid}} = 1.0$, hole
+    radius $0.3$, $10$ holes per side on the domain $L_1 = L_2 = 1.0$, so that
+    $\varepsilon = L_1 / 10$, which give $\kappa^{\star} =
+    \begin{pmatrix} 0.56 & \approx 0 \\ \approx 0 & 0.56 \end{pmatrix}$, isotropic and
+    diagonal as expected for a circular hole.}
+    \label{fig:temp_circle}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}\centering
+    \includegraphics[width=\textwidth]{temperature_ellipse.pdf}
+    \caption{Temperature field and local heat flux, shown by arrows, over a
+    whole plate perforated by elliptical holes. Parameters are $\kappa_{\tmop{solid}} = 1.0$, ellipse
+    semi-axes $a = 0.4$ and $b = 0.15$ rotated by $55^{\circ}$, $10$ holes per side on
+    the domain $L_1 = L_2 = 1.0$, so that $\varepsilon = L_1 / 10$, which give
+    $\kappa^{\star} = \begin{pmatrix} 0.59 & 0.12 \\ 0.12 & 0.69 \end{pmatrix}$. The
+    flux is largest near the tips of the major axis, where the heat is forced to curve
+    most sharply around the hole.}
+    \label{fig:temp_ellipse}
+  \end{minipage}
+\end{figure}
+
+\clearpage
 \listoffigures
 
 \end{document}

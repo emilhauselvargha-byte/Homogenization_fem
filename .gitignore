@@ -28,3 +28,4 @@ report/*.blg
 figures/diagrams/*.aux
 figures/diagrams/*.log
 figures/diagrams/*.pdf
+*.tmp
