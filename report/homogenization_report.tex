@@ -67,10 +67,10 @@ homogenization methods for heat conduction problems in periodically insulated
 media. Before homogenization is itself presented, motivation for its use is
 given. In particular, the naive approach of a Direct Numerical Solve (DNS) is
 discussed as the obvious method for computing the heat field on a perforated
-plate. This direct solve uses the Finite Element Method (FEM). Essential to this technique is the variational (weak) form of the governing PDE -- here the steady state heat equation -- and as such a derivation of this equation is provided. Complementing the derivation is a
-brief explanation of how this weak form is used in the solver implemented in
-this study. While the DNS is viable and accurate (so much so that it is used
-as a benchmark throughout this investigation) for a small number of
+plate. This direct solve uses the Finite Element Method (FEM). Essential to this technique is the variational or weak form of the governing PDE -- here the steady state heat equation -- and as such a derivation of this equation is provided. 
+Complementing the derivation is a
+brief explanation of how this weak form is used to build the solver for this study. While the DNS is viable and accurate -- so much so that it is used
+as a benchmark throughout this investigation -- for a small number of
 perforations, it quickly becomes unfeasible once their number increases. This
 is primarily because the resolution needed to resolve the effects of many
 small inclusions is too expensive and the simulation fails to terminate within
@@ -113,8 +113,8 @@ where
   \item $Q$ is the total of all heat sources
 \end{itemize}
 In our study, the equation is drastically simplified so that emphasis may be
-placed on the numerical methods as opposed to sophisticated physics.
-In particular, the assumptions made are:
+placed on the numerical homogenization methods as opposed to sophisticated physics.
+In particular, the following assumptions are made:
 \begin{enumeratenumeric}
   \item There are no sources or sinks in the plate (i.e. $Q = 0$)
   
@@ -147,14 +147,14 @@ In order for the problem to be well posed, one must put into place the
 boundary conditions. The case of interest is when the domain has periodic
 inclusions made of an entirely insulating medium, that is, there are
 periodic occurrences of regions where $\kappa = 0$. In order to recreate this
-numerically, a rectangular domain is used, which is then perforated with
+numerically a rectangular domain is used, which is then perforated with
 regularly spaced circular holes. Perfect insulation is simulated by imposing a
 Neumann boundary condition: through the surface of each such inclusion zero
 heat flux is allowed. Further, the quantity of interest in this study is the
 effective conductivity tensor $\kappa^{\star}$ of the resulting material. To
 gain information about this tensor, a macroscopic temperature gradient is
-imposed on the whole domain. This is done by imposing Dirichlet boundary
-conditions. Finally, in order to avoid heat leakage through the bottom and top edges of the domain, zero heat flux is required through these edges also. A summary of these conditions, on the domain $\Omega = [0, L_1] \times [0, L_2]$, is given below
+imposed laterally on the whole domain. This is done by choosing Dirichlet boundary
+conditions. Finally, in order to avoid heat leakage through the bottom and top edges of the rectangle, zero heat flux is required through these edges also. A summary of these conditions, on the domain $\Omega = [0, L_1] \times [0, L_2]$, is given below
 \begin{equation}
   \label{eq:bc}
   \tmop{BC} = \left\{ \begin{array}{l}
@@ -165,8 +165,7 @@ conditions. Finally, in order to avoid heat leakage through the bottom and top e
     \nabla u \cdot \mathbf{n}= 0 \quad \tmop{on} \tmop{inclusion} \tmop{edges}
   \end{array} \right.
 \end{equation}
-The domain and the parts of its boundary on which each of these conditions is applied
-are sketched in Fig.~\ref{fig:bc_dns}(a), and a mesh of such a domain, as it is used in
+A sketch of these conditions can be found in Fig.~\ref{fig:bc_dns}(a), and an example mesh, as used in
 the computations, is shown in Fig.~\ref{fig:perforated_rectangle}.
 
 \begin{figure}[h]
@@ -184,7 +183,7 @@ the computations, is shown in Fig.~\ref{fig:perforated_rectangle}.
 \end{figure}
 
 One could extend the study to three dimensions, in which case the domain would
-resemble the one shown in Fig.~\ref{fig:perforated_cube}, in the appendix. A slice of the direct numerical solve for a simple 10 by 10 case can be seen in Fig.~\ref{fig:cube_temperature}. The cube is sliced to reveal the temperature inside it, which varies across the cylinders but not along them. Perforating a cube with simple parallel cylinders is, by symmetry, exactly equivalent to completing a simpler 2D study of the perpendicular cross-section, which is what is done here; reducing dimensions substantially reduces computational costs. It would be interesting, however, to
+resemble the one shown in Fig.~\ref{fig:perforated_cube} in the appendix. A slice of the direct numerical solve for a simple 10 by 10 case can be seen in Fig.~\ref{fig:cube_temperature}. The cube is sliced to reveal the temperature inside it, which varies across the cylinders but not along them. Perforating a cube with simple parallel cylinders is, by symmetry, exactly equivalent to completing a simpler 2D study of the perpendicular cross-section, which is what is done here; reducing dimensions substantially reduces computational costs. It would be interesting, however, to
 study the effect of rotating or curving the inclusions on the effective
 conductivity tensor. One might ask if any $\kappa^{\star}$ can be attained by
 playing with the geometry.
@@ -216,7 +215,7 @@ equation of the form
   a (u, v) = L (v) \quad \forall v \in V^0
 \end{equation}
 for some linear form $L : V \rightarrow \mathbb{R}$ and bilinear form $a : V
-\times V \rightarrow \, \mathbb{R}$. Once the problem is rewritten in this
+\times V \rightarrow \, \mathbb{R}$, which must be satisfied by $u$. Once the problem is rewritten in this
 way, the infinite dimensional solution space $V$ is approximated by a finite
 dimensional space $V_h$ with a well chosen basis $\{ v^i_h \}_{i = 1}^n$ of
 functions. These functions are called ``finite elements''. In effect, the
@@ -279,7 +278,7 @@ the boundary integral,
 \[ \oint_{\partial \Omega} v \nabla u \cdot d\mathbf{l} = \int_{\partial
    \Omega_{\tmop{Dirichlet}}} v \nabla u \cdot d\mathbf{l} \, + \, \int_{\partial
    \Omega_{\tmop{Neumann}}} v \nabla u \cdot d\mathbf{l} . \]
-The first term is null because $v = 0$ on $\partial \Omega_{\tmop{Dirichlet}}$.
+The first term is null because $v = 0$ on $\partial \Omega_{\tmop{Dirichlet}}$ by definition.
 The second is null because the Neumann conditions give $\nabla u \cdot d\mathbf{l}
 = (\nabla u \cdot \mathbf{n}) \, dl = 0$ on $\partial \Omega_{\tmop{Neumann}}$.
 
@@ -363,29 +362,28 @@ the solution.
 \subsubsection{Discretization: quadratic elements on curved meshes}
 \label{sec:p2}
 
-All computations in this study use second-order (P2) Lagrange elements on
+All computations in this study use second-order Lagrange elements, called P2, on
 second-order, curved triangular meshes, rather than the hat functions above.
 The reason is the size of the quantity we want to measure. The homogenization
 error of the two-scale reconstruction turns out to be around $2\times10^{-5}$ at
-the smallest cell size considered (Section~\ref{sec:results}), and it can only be
-measured if the finite element error is well below that. This is harder than it
-sounds, because the DNS mesh must resolve every hole: its element size is tied
-to the cell size, $h \propto \varepsilon$, so its \emph{relative} accuracy does not
-improve as $\varepsilon \to 0$. Any quantity whose homogenization error is smaller
-than this fixed FEM error simply plateaus. This is what happened in an earlier
-version of this study with first-order elements: for a circular hole, the
-effective conductivity measured from the DNS differed from $\kappa^{\star}_{11}$ by
-a constant $0.6\%$ at every $\varepsilon$. For a circle with the boundary
-conditions of Eq.~\eqref{eq:bc} the homogenized solution is exact
-(Section~\ref{sec:results}), so this entire $0.6\%$ was discretization error; with
-P2 elements on curved meshes of the same element size it falls to $5\times10^{-5}$.
+the smallest cell size considered, and it can only be measured if the finite element
+error is well below that. This is harder than it sounds, because the DNS mesh must
+resolve every hole. Its element size is tied to the cell size, $h \propto \varepsilon$,
+so its relative accuracy does not improve as $\varepsilon \to 0$, and any quantity whose
+homogenization error is smaller than this fixed FEM error simply plateaus. This is what
+happened in an earlier version of this study with first-order elements, where for a
+circular hole the effective conductivity measured from the DNS differed from
+$\kappa^{\star}_{11}$ by a constant $0.6\%$ at every $\varepsilon$. For a circle with the
+boundary conditions of Eq.~\eqref{eq:bc} the homogenized solution is exact, as explained
+in Section~\ref{sec:setup}, so this entire $0.6\%$ was discretization error, and with P2
+elements on curved meshes of the same element size it falls to $5\times10^{-5}$.
 
 Curved elements matter as much as the polynomial degree. A hole meshed with
 straight-edged triangles is a polygon, and the resulting geometric error,
 $O(h^2)$, caps the accuracy whatever the degree of the elements. Second-order
 meshes place the mid-edge nodes on the hole boundary, which reduces the
 geometric error to $O(h^3)$ and lets the P2 elements reach their nominal
-accuracy: the computed $\kappa^{\star}$, an energy quantity, converges like $h^4$,
+accuracy. The computed $\kappa^{\star}$, an energy quantity, then converges like $h^4$,
 and changes by only $3\times10^{-7}$ between unit-cell meshes of element size
 $1.5/120$ and $1.5/160$.
 Figure~\ref{fig:perforated_rectangle} shows a DNS mesh exactly as it is used in
@@ -435,7 +433,7 @@ once, on a single small unit cell, rather than once per macroscopic problem.
 The DNS approach discussed above solves the exact problem at the cost of
 resolving every inclusion explicitly. Homogenization instead asks: viewed
 from far enough away that individual holes are no longer visible, what
-\emph{effective}, hole-free material would produce the same macroscopic
+effective, hole-free material would produce the same macroscopic
 temperature field? If such an equivalent material can be found, the
 macroscopic problem can be solved on a plain, coarse mesh with no
 microstructure to resolve at all, at a fraction of the DNS cost. This section
@@ -603,7 +601,7 @@ the flux must therefore remain tangent to its boundary. For the circular
 inclusion the resulting tensor is isotropic and diagonal to within numerical
 precision, with $\kappa^{\star}_{11} = \kappa^{\star}_{22}$ and
 $\kappa^{\star}_{12} = 0$, as expected from the four-fold rotational symmetry of a
-circle in a square cell: no direction is geometrically preferred, so none can
+circle in a square cell. No direction is geometrically preferred, so none can
 be preferred by the effective conductivity either.
 
 \begin{figure}[h]
@@ -624,10 +622,11 @@ which lowers the porosity and lets every direction conduct better. To isolate
 the effect of shape, Fig.~\ref{fig:ellipse_sweeps}(a) varies the aspect ratio $b/a$
 of an axis-aligned ellipse at constant hole area $ab = 0.06$, that is, at
 constant porosity. The expected trade-off then appears cleanly. Heat is
-increasingly free to travel along the elongated axis, with $\kappa^{\star}_{11}$
-rising from $0.68$ to $0.79$, and increasingly obstructed across it, with
-$\kappa^{\star}_{22}$ falling to $0.35$, steeply so once the gap between
-neighbouring holes becomes narrow.
+increasingly free to travel along the elongated axis, so that $\kappa^{\star}_{11}$
+rises, and increasingly obstructed across it, so that $\kappa^{\star}_{22}$ falls,
+steeply so once the gap between neighbouring holes becomes narrow. The trade-off is far
+from symmetric, as over the range shown $\kappa^{\star}_{22}$ loses about three times as
+much as $\kappa^{\star}_{11}$ gains.
 
 \begin{figure}[h]
   \centering
@@ -765,15 +764,14 @@ or load cases, none of which require solving the cell problem again.
 \subsubsection{Validation setup}
 \label{sec:setup}
 
-The homogenization pipeline was validated against DNS on geometry
-constructed so that the two are directly comparable: the DNS domain is built
-as an exact tiling of the same unit cell used in the corrector solve (same
-inclusion shape and size relative to the cell, arranged edge-to-edge with no
-margins), so that the DNS and the homogenized model describe, by
-construction, the same physical material. The domain is the square
-$[0, L]^2$ with $L = 0.8$, divided into $n \times n$ cells of size
-$\varepsilon = L / n$, with $n$ from $2$ to $12$. Every solve (cell problem, macro
-problem and DNS) uses P2 elements on curved meshes (Section~\ref{sec:p2}).
+The homogenization pipeline was validated against a DNS on a geometry built so that
+the two are directly comparable. The DNS domain is an exact tiling of the unit cell used
+in the corrector problems, with the same hole shape and size relative to the cell and the
+cells arranged edge to edge without margins, so that the DNS and the homogenized model
+describe, by construction, the same material. The domain is the square $[0, L]^2$ with
+$L = 0.8$, divided into $n \times n$ cells of size $\varepsilon = L / n$ with $n$ from $2$
+to $12$, and every solve, whether of the cell problem, the macroscopic problem or the DNS,
+uses P2 elements on curved meshes as described in Section~\ref{sec:p2}.
 
 \paragraph{Choice of hole.} A circular hole cannot show the homogenization
 error with the boundary conditions of Eq.~\eqref{eq:bc}. For a centred circle,
@@ -782,7 +780,7 @@ $T = x_1 / L$, and the mirror symmetries of the cell make $\chi_1$ vanish on the
 faces $y_1 = 0, 1$ and $\partial \chi_1 / \partial y_2$ vanish on $y_2 = 0, 1$. The reconstruction
 $x_1/L + (\varepsilon / L)\, \chi_1(\{x/\varepsilon\})$ then satisfies the heat
 equation, the insulated hole walls, both Dirichlet conditions and the insulated
-top and bottom edges: it is the \emph{exact} solution of the DNS problem, and
+top and bottom edges. It is thus the exact solution of the DNS problem, and
 any measured difference is FEM error. We therefore use a rotated ellipse,
 $a = 0.3$, $b = 0.12$, rotated by $40^{\circ}$, for which
 \[
@@ -961,29 +959,28 @@ faces and decays within a fraction of a cell.
 Both comparisons with the DNS use the geometry and the elliptical hole of
 Section~\ref{sec:setup}.
 
-\paragraph{Field error: second-order accuracy of the reconstruction.} The
-DNS field $u_{\mathrm{DNS}}$ is compared, on a $40 \times 40$ grid of points covering
-$[0.15 L, 0.85 L]^2$ (points falling inside a hole are skipped), with two
-approximations: the macroscopic field $T$ alone, and the two-scale
-reconstruction $T + \varepsilon \chi \cdot \nabla T$ of
-Eq.~\eqref{eq:twoscale_ansatz}. Figure~\ref{fig:homogenization_error} shows the RMS
-of both differences. The macroscopic field alone is first-order accurate,
+\paragraph{Field error: second-order accuracy of the reconstruction.} The DNS field
+$u_{\mathrm{DNS}}$ is compared with two approximations, the macroscopic field $T$ alone
+and the two-scale reconstruction $T + \varepsilon \chi \cdot \nabla T$ of
+Eq.~\eqref{eq:twoscale_ansatz}, on a $40 \times 40$ grid of points covering
+$[0.15 L, 0.85 L]^2$, points falling inside a hole being skipped.
+Figure~\ref{fig:homogenization_error} shows the RMS of both differences against the cell
+size. The macroscopic field alone converges at first order, with a fitted rate
 \[
 \mathrm{RMS}(u_{\mathrm{DNS}} - T) \sim \varepsilon^{0.97},
 \]
-as expected, since it omits the $O(\varepsilon)$ oscillation that the holes
-imprint on the temperature. Adding the corrector removes that oscillation, and
-the error of the reconstruction is second order:
+which is expected since it misses the oscillation of amplitude $\varepsilon$ that the
+holes imprint on the temperature. Adding the corrector restores this oscillation, and
+the error of the reconstruction then decays at second order,
 \[
 \mathrm{RMS}\big(u_{\mathrm{DNS}} - (T + \varepsilon \chi \cdot \nabla T)\big) \sim \varepsilon^{2.02} .
 \]
-This is the central quantitative result of the study. It is what the
-asymptotic expansion of Eq.~\eqref{eq:twoscale_ansatz} predicts: the first
-neglected term is of the form $\varepsilon^2 \chi_{ij}(\{x/\varepsilon\})\, \partial_i
-\partial_j T$, with second-order correctors $\chi_{ij}$, and it is non-zero here
-because $T$ is curved. At the smallest cell size, $\varepsilon = 0.8/12 \approx 0.07$, the
-reconstruction is about $200$ times more accurate than $T$ alone ($2.0 \times 10^{-5}$
-against $4.2 \times 10^{-3}$, for a temperature varying between $0$ and $1$).
+This is the central result of the study, and it is what the expansion of
+Eq.~\eqref{eq:twoscale_ansatz} predicts, the first neglected term being of the form
+$\varepsilon^2 \chi_{ij}(\{x/\varepsilon\})\, \partial_i \partial_j T$, with second-order
+correctors $\chi_{ij}$, which does not vanish here because $T$ is curved. The two rates
+open a gap that widens as the cells shrink, and at the smallest cell size the
+reconstruction is about two hundred times more accurate than $T$ alone.
 
 \begin{figure}[h]
   \centering\includegraphics[width=0.7\textwidth]{homogenization_error.png}
@@ -1001,59 +998,53 @@ against $4.2 \times 10^{-3}$, for a temperature varying between $0$ and $1$).
   \label{fig:homogenization_error}
 \end{figure}
 
-Two checks support this reading. First, the FEM error is negligible: the cell
-and DNS meshes were refined in three levels (element sizes $1.5/40$, $1.5/80$,
-$1.5/120$ on the unit cell and $\varepsilon/20$, $\varepsilon/40$, $\varepsilon/60$
-in the DNS), and between the last two levels the reconstruction error changes
-by $0.05\%$ to $1\%$ depending on $\varepsilon$; even the coarsest level lies
-within $20\%$ of the finest (open circles in Fig.~\ref{fig:homogenization_error}).
-Second, the rates are fitted over $n \geq 4$ only. The expansion holds away
-from the domain boundary: near the Dirichlet edges, where $\chi$ does not match
-the boundary data, boundary layers of width $\sim\varepsilon$ appear and decay
-into the interior, as described in Section~\ref{sec:boundary_layer}. The sampling region stays $0.15 L = 0.12$ away from the edges,
-which is less than one cell for $n = 2, 3$ ($\varepsilon = 0.4$ and $0.27$), so those
-points are affected by the boundary layers and are excluded from the fit.
+Two checks support this reading. The first concerns the finite element error. The cell
+and DNS meshes were refined in three levels, from $1.5/40$ to $1.5/120$ on the unit cell
+and from $\varepsilon/20$ to $\varepsilon/60$ in the DNS, and the open circles of
+Fig.~\ref{fig:homogenization_error} show that even the coarser levels lie close to the
+finest one. Between the last two levels the reconstruction error changes by at most one
+percent, so the plotted error is the homogenization error and not a discretization
+artefact. The second check concerns the two largest cells, $n = 2$ and $3$, which are
+left out of the fit. The sampling region keeps a distance of $0.15 L = 0.12$ from the
+edges, which is less than one cell for these sizes, so the sampled points reach into the
+boundary layers of Section~\ref{sec:boundary_layer}, and with so few cells the expansion
+is in any case far from its asymptotic regime. The figure shows these two points
+departing from the second-order trend set by the smaller cells.
 
 \paragraph{Effective conductivity: convergence of the full tensor.} The second
-comparison concerns $\kappa^{\star}$ itself. An earlier version of this study
-compared $\kappa^{\star}_{11}$ with the effective conductivity read off the DNS of
-Eq.~\eqref{eq:bc}, for a circular hole; the relative difference plateaued instead
-of decreasing with $\varepsilon$. Given the discussion above, this is no surprise:
-for the circle the homogenized solution is exact, so the comparison could only
-measure the (constant, see Section~\ref{sec:p2}) relative FEM error. For an
-anisotropic hole, the flux of Eq.~\eqref{eq:bc} is moreover not
-$\kappa^{\star}_{11}$, because the insulated top and bottom edges interact with
-the off-diagonal coupling.
+comparison concerns $\kappa^{\star}$ itself. An earlier version of this study compared
+$\kappa^{\star}_{11}$ with the effective conductivity read off the DNS of
+Eq.~\eqref{eq:bc} for a circular hole, and found a relative difference that did not
+decrease with $\varepsilon$. In light of the discussion above this is no surprise, since
+for the circle the homogenized solution is exact, and the comparison could only measure
+the relative FEM error, which Section~\ref{sec:p2} showed to be constant. For an
+anisotropic hole the flux of Eq.~\eqref{eq:bc} is moreover not $\kappa^{\star}_{11}$,
+because the insulated top and bottom edges interact with the off-diagonal coupling. We
+therefore compare $\kappa^{\star}$ with the apparent tensor of a finite sample defined in
+Eq.~\eqref{eq:Kapp}. As shown in Section~\ref{sec:boundary_layer}, the two differ only
+through the flux of the boundary layer, by an amount predicted by
+Eq.~\eqref{eq:Kapp_rate} to be proportional to $4\varepsilon/L$, with a constant that
+does not depend on $n$.
 
-We therefore compare $\kappa^{\star}$ with the apparent tensor of a finite sample,
-defined in Eq.~\eqref{eq:Kapp}. Section~\ref{sec:boundary_layer} showed that the two
-differ only through the flux of the boundary layer, and predicted that the difference is
-not only $O(\varepsilon)$ but proportional to $4\varepsilon/L$, with a constant that does
-not depend on $n$, as stated in Eq.~\eqref{eq:Kapp_rate}.
+Figure~\ref{fig:tensor_convergence} shows the relative difference
+$\|\kappa^{\mathrm{app}} - \kappa^{\star}\|_F / \|\kappa^{\star}\|_F$ for the circle and
+the rotated ellipse, with $\kappa^{\star}$ computed on a fine unit-cell mesh. For both
+shapes it decreases at the fitted rate $\varepsilon^{1.00}$, with no sign of a plateau.
+The prediction of Eq.~\eqref{eq:Kapp_rate} holds in its sharper form as well. Dividing
+the relative difference by the area fraction $4\varepsilon/L$ of the layer gives the same
+number at every $n$, $4.28\times10^{-3}$ for the circle and $6.3\times10^{-4}$ for the
+ellipse, to within one percent. This holds even at $n = 2$, where the corners make up a
+large part of the layer but, being of higher order, still do not show.
 
-Figure~\ref{fig:tensor_convergence} shows the result for the circle and the
-rotated ellipse of the previous paragraphs, with $\kappa^{\star}$ computed on a
-fine unit-cell mesh (accurate to about $10^{-7}$). The relative difference
-$\|\kappa^{\mathrm{app}} - \kappa^{\star}\|_F / \|\kappa^{\star}\|_F$ decreases with
-fitted slope $1.00$ for both shapes, from $8.6 \times 10^{-3}$ to $1.4 \times 10^{-3}$
-for the circle and from $1.3 \times 10^{-3}$ to $2.1 \times 10^{-4}$ for the ellipse
-between $n = 2$ and $n = 12$, with no sign of a plateau. The sharper prediction of Eq.~\eqref{eq:Kapp_rate} holds as
-well, the relative difference being a fixed multiple of the area fraction $4\varepsilon/L$
-of the layer, with a ratio of $4.28\times10^{-3}$ for the circle at every $n$ and varying only
-between $6.29\times10^{-4}$ and $6.34\times10^{-4}$ for the ellipse, even at $n=2$,
-where the corners make up a large part of the layer but, being of higher order, still do
-not show. Entry by entry, the
-diagonal entries of the ellipse converge at the same rate (slopes $0.99$ and
-$1.00$), and $\kappa^{\mathrm{app}} - \kappa^{\star}$ is positive definite in every
-case, the finite sample always conducting slightly better than the effective material. The off-diagonal entry is reproduced far
-more closely: its deviation stays below $5 \times 10^{-6}$, about a thousand times
-less than the diagonal ones and at the level of the remaining FEM error, so its
-rate cannot be resolved. Each DNS was run at two mesh resolutions (element
-size $\varepsilon/30$ and $\varepsilon/60$); for the circle the two agree to
-$2 \times 10^{-6}$, and for the ellipse they differ by a constant $2.6 \times
-10^{-5}$, which, with the $h^4$ convergence of these energy quantities, puts
-the FEM error of the finer level near $2 \times 10^{-6}$, about $1\%$ of the
-smallest difference measured.
+The right panel of the figure follows the two diagonal entries of the ellipse separately.
+They converge at the same rate, and both differences are positive in every case, the
+finite sample always conducting slightly better than the effective material. The
+off-diagonal entry, which is not plotted, is reproduced about a thousand times more
+closely, at the level of the remaining FEM error, so that its rate cannot be resolved.
+Each DNS was also run at the two mesh resolutions $\varepsilon/30$ and $\varepsilon/60$,
+and given the $h^4$ convergence of these energy quantities, the difference between the
+two places the FEM error of the finer level at about one percent of the smallest
+difference measured.
 
 \begin{figure}[h]
   \centering\includegraphics[width=\textwidth]{tensor_convergence.png}
@@ -1069,69 +1060,54 @@ $\kappa^{\mathrm{app}}_{ii} - \kappa^{\star}_{ii}$, positive in every case; the 
   \label{fig:tensor_convergence}
 \end{figure}
 
-No systematic runtime comparison between the DNS and the homogenization
-pipeline was carried out in this study. Such a comparison -- for instance,
-wall-clock time for both approaches as a function of the number of
-inclusions in a fixed macroscopic domain -- would meaningfully strengthen
-the efficiency argument made qualitatively in Section~\ref{sec:algorithm}, by turning "the
-homogenized cost is independent of $\varepsilon$ while the DNS cost grows
-sharply" into a quantitative statement. This is noted as a natural, low-cost
-extension of the present work.
+The running times of the two approaches were not measured in this study.
+Comparing them on a fixed plate as the number of holes increases would show
+directly how much the homogenized pipeline saves, since its cost should not
+depend on $\varepsilon$, whereas the cost of the DNS grows quickly with the
+number of holes. Such a comparison would be simple to add to the existing
+scripts.
 
-\FloatBarrier
 \section{Conclusion}
 
-This study implemented and validated a first-order periodic homogenization
-pipeline for steady-state heat conduction in a plate perforated with
-insulating inclusions, and used it to investigate how inclusion shape shapes
-the resulting effective conductivity tensor. The direct numerical solve was
-presented first, both as the physical and numerical baseline against which
-homogenization is validated, and to motivate homogenization's necessity:
-DNS cost and geometric complexity grow rapidly with the number of
-inclusions, quickly becoming impractical. The effective conductivity tensor
-$\kappa^{\star}$ was then defined and computed from a single periodic
-unit-cell problem.
+This study implemented a first-order periodic homogenization method for steady-state heat
+conduction in a plate perforated by insulating holes, validated it against a direct
+numerical solve, and used it to study how the shape of the holes determines the effective
+conductivity tensor. The direct solve served both as a benchmark and as a motivation,
+since its cost and the complexity of its geometry grow quickly with the number of holes.
+The homogenized model replaces it by a single unit-cell problem, from which the effective
+tensor $\kappa^{\star}$ is computed, followed by a solve on a plain mesh without holes.
 
-The comparison with a geometrically matched DNS confirms the two rates
-predicted by the asymptotic theory, once the finite element error is
-controlled with quadratic elements on curved, sufficiently refined meshes. For
-a rotated elliptical hole, the macroscopic field alone approximates the DNS to
-first order, $O(\varepsilon^{0.97})$, and the two-scale reconstruction, which adds
-the corrector term $\varepsilon \chi \cdot \nabla T$, to second order,
-$O(\varepsilon^{2.02})$; at the smallest cell size tested the reconstruction is
-about $200$ times more accurate. The conductivity tensor of a finite perforated
-sample, measured from the DNS, converges to $\kappa^{\star}$ at the expected rate
-$O(\varepsilon)$, from above, for both a circular and an elliptical hole.
-Controlling the discretization was essential: with linear elements and meshes
-tied to $\varepsilon$, the FEM error does not shrink with $\varepsilon$ and hides both
-results behind a plateau. A circle, for which the homogenized solution is exact
-with the boundary conditions used, turned out to be a test of the FEM error
-rather than of the homogenization.
+The comparison with a direct solve on an exactly matching tiling confirms the two rates
+predicted by the two-scale expansion. For a rotated elliptical hole, the macroscopic field
+alone approximates the DNS to first order in $\varepsilon$, and the reconstruction that
+adds the corrector term $\varepsilon \chi \cdot \nabla T$ to second order, so that at the
+smallest cell size tested it is about two hundred times more accurate. The conductivity
+tensor of a finite perforated sample converges to $\kappa^{\star}$ at first order, from
+above, for both a circular and an elliptical hole. This rate is set by a boundary layer,
+which was measured to decay exponentially over a distance proportional to $\varepsilon$
+and therefore occupies a fraction $4\varepsilon/L$ of the sample, a prediction the
+measured tensors follow closely. None of this was visible before the discretization was
+controlled. With linear elements on meshes tied to $\varepsilon$, the finite element error
+does not shrink with $\varepsilon$ and hides both rates behind a plateau, and a circular
+hole, for which the homogenized solution happens to be exact with the boundary conditions
+used, turned out to test the finite element error rather than the homogenization.
 
-Varying the inclusion shape from a circle to an ellipse, and rotating that
-ellipse, was shown to tune the effective tensor's anisotropy and off-diagonal
-coupling in a physically sensible, symmetry-consistent way: at constant
-porosity, elongating an axis-aligned inclusion increases conductivity along
-its major axis at the expense of its minor axis, while rotating an elongated
-inclusion introduces genuine off-axis heat deflection, visible as a non-zero
-off-diagonal tensor entry, maximal near $45^{\circ}$ and vanishing at the
-axis-aligned extremes.
+Varying the shape of the hole tunes the effective tensor in a way that follows its
+symmetries. At constant porosity, elongating an axis-aligned ellipse raises the
+conductivity along its major axis at the expense of its minor axis, and rotating it
+produces an off-diagonal entry, which records the sideways deflection of heat by the
+tilted hole, vanishes at the axis-aligned orientations and is largest near $45^{\circ}$.
 
-Several extensions naturally follow from this work. A quantitative runtime
-comparison between DNS and the homogenized pipeline would strengthen the
-efficiency argument made here only qualitatively. The boundary-tagging logic
-used to distinguish inclusion walls from domain edges currently assumes
-smooth (circular or elliptical) inclusion boundaries; extending it to
-polygonal shapes (triangles, squares) would broaden the space of
-inclusion geometries that can be studied, at the cost of a small but
-necessary fix to correctly classify axis-aligned polygon edges. Extending
-the macroscopic domain to curved shapes is comparatively straightforward,
-since the homogenized problem of Eq.~\eqref{eq:macro_problem} places no
-requirements on domain shape. Finally, the entire pipeline generalizes
-naturally to three dimensions, at the cost of a third corrector direction
-and increased mesh cost; Figures~\ref{fig:perforated_cube}
-and~\ref{fig:cube_temperature} illustrate the geometry such a study would
-require.
+Several extensions follow naturally. Measuring the running times of both approaches would
+make the efficiency argument quantitative. The code that tells hole walls apart from
+domain edges currently assumes smooth holes such as circles and ellipses, and a small
+change would extend it to polygonal holes such as triangles or squares, broadening the
+range of shapes that can be studied. The macroscopic domain could also be curved without
+difficulty, since the homogenized problem of Eq.~\eqref{eq:macro_problem} places no
+requirement on its shape. Finally, the method extends to three dimensions at the cost of a
+third corrector and larger meshes, and Figs.~\ref{fig:perforated_cube}
+and~\ref{fig:cube_temperature} in the appendix illustrate the geometry such a study would
+involve.
 
 \clearpage
 \appendix
