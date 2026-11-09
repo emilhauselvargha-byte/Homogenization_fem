@@ -71,12 +71,8 @@ plate. This direct solve uses the Finite Element Method (FEM). Essential to this
 Complementing the derivation is a
 brief explanation of how this weak form is used to build the solver for this study. While the DNS is viable and accurate -- so much so that it is used
 as a benchmark throughout this investigation -- for a small number of
-perforations, it quickly becomes unfeasible once their number increases. This
-is primarily because the resolution needed to resolve the effects of many
-small inclusions is too expensive and the simulation fails to terminate within
-a reasonable time frame. Also, the computational domain to mesh becomes much
-more complicated, to the extent that even building the geometry becomes
-expensive. To combat these effects, a first order homogenization method is
+perforations, it quickly becomes too expensive once their number increases, for
+reasons discussed in Section~\ref{sec:dns_discussion}. To overcome this, a first order homogenization method is
 introduced to solve a simpler problem and reconstruct the solution function
 without needing to produce complicated geometries or solve equations on them.
 The results of the this new, homogenized simulation are then presented and discussed before some brief concluding remarks are made to close the study.
@@ -411,27 +407,26 @@ first-order elements.
 \subsubsection{DNS - discussion}
 \label{sec:dns_discussion}
 
-The main difficulty involved in the direct numerical solve is that a geometry
-with dense perforations must be constructed and meshed. Since the holes must
-be resolved individually, the mesh has to be locally refined around each
-inclusion; as the number of inclusions grows, so does the total element
-count, roughly in proportion to the number of holes for a fixed
-resolution-per-hole. Beyond a modest number of perforations the resulting
-linear system becomes prohibitively large, and the simulation fails to
-terminate within a practical time frame. Compounding this, the geometry
-construction step itself (building and meshing hundreds of small circular
-cutouts in \texttt{gmsh}) becomes increasingly slow and fragile, independently
-of the linear solve. These two difficulties -- geometric complexity and
-system size -- are precisely what motivate the homogenization approach
-introduced next: the microstructure is replaced by an equivalent smooth
-material, so that the expensive fine geometry only ever needs to be resolved
-once, on a single small unit cell, rather than once per macroscopic problem.
+The main difficulty of the direct numerical solve comes from the holes themselves.
+Since each hole must be resolved individually, the mesh has to be refined around every
+inclusion, and the total number of elements grows roughly in proportion to the number of
+holes for a fixed resolution per hole. The resolution needed to resolve the effects of
+many small inclusions therefore becomes too expensive, and beyond a modest number of
+perforations the linear system is so large that the simulation fails to terminate within
+a reasonable time frame. The computational domain to mesh also becomes much more
+complicated, to the extent that even building the geometry, which means constructing and
+meshing hundreds of small cutouts in \texttt{gmsh}, becomes slow and fragile,
+independently of the linear solve. These two difficulties, the complexity of the geometry
+and the size of the system, are precisely what motivate the homogenization approach
+introduced next, in which the microstructure is replaced by an equivalent smooth material.
+This way, the fine geometry only ever needs to be resolved once on a single small unit
+cell, rather than once per macroscopic problem.
 
 \FloatBarrier
 \section{Homogenization }
 
 The DNS approach discussed above solves the exact problem at the cost of
-resolving every inclusion explicitly. Homogenization instead asks: viewed
+resolving every inclusion explicitly. Homogenization instead tries to solve the following problem: viewed
 from far enough away that individual holes are no longer visible, what
 effective, hole-free material would produce the same macroscopic
 temperature field? If such an equivalent material can be found, the
@@ -468,11 +463,10 @@ off-diagonal entries $\kappa^{\star}_{12} = \kappa^{\star}_{21}$ (symmetry is
 discussed below) describe this cross-direction coupling, and vanish whenever
 the microstructure possesses the appropriate mirror symmetries (e.g. a
 circular or axis-aligned elliptical inclusion). We are interested in
-$\kappa^{\star}$ in this study both because it is the object that makes the
+$\kappa^{\star}$ both because it is the object that makes the
 macroscopic problem solvable without resolving the microstructure, and
 because it provides a compact, coordinate-free summary of how a given
-inclusion shape affects heat transport -- the central question this study
-sets out to explore.
+inclusion shape affects heat transport.
 
 \FloatBarrier
 \subsubsection{Computing the effective conductivity}
@@ -487,8 +481,7 @@ $y = (y_1, y_2) \in Y$. A point $x$ of the plate thus sits at the position
 $y = \{ x / \varepsilon \}$ within its own cell, where $\{ \cdot \}$ denotes the
 fractional part taken componentwise. We write $Y_{\tmop{solid}}$ for the unit
 cell with the inclusion removed, $\nabla_y$ for the gradient with respect to
-$y$, and $e_1, e_2$ for the unit vectors of the two coordinate directions,
-which are simply called directions $1$ and $2$ from now on. The two coordinates
+$y$, and $e_1, e_2$ for the unit vectors of the two coordinate directions. The two coordinates
 and the correspondence between them are sketched in Fig.~\ref{fig:bc_cell}(a).
 
 The effective tensor is obtained from two auxiliary problems posed on the unit
@@ -621,7 +614,7 @@ once, because at fixed semi-axis $a$ a thinner ellipse is also a smaller hole,
 which lowers the porosity and lets every direction conduct better. To isolate
 the effect of shape, Fig.~\ref{fig:ellipse_sweeps}(a) varies the aspect ratio $b/a$
 of an axis-aligned ellipse at constant hole area $ab = 0.06$, that is, at
-constant porosity. The expected trade-off then appears cleanly. Heat is
+constant porosity. The expected trade-off then appears. Heat is
 increasingly free to travel along the elongated axis, so that $\kappa^{\star}_{11}$
 rises, and increasingly obstructed across it, so that $\kappa^{\star}_{22}$ falls,
 steeply so once the gap between neighbouring holes becomes narrow. The trade-off is far
@@ -798,7 +791,7 @@ The two-scale expansion of Eq.~\eqref{eq:twoscale_ansatz} is built from correcto
 that only know about the periodic cell, and nothing in its construction refers to the
 boundary of $\Omega$. Away from the boundary this does no harm, but on $\partial\Omega$
 the reconstruction does not in general satisfy the boundary conditions, and the true
-solution has to make up the difference within a thin region along the boundary, called
+solution has to make up the difference within a thin region along the boundary, which we call (rather unimaginatively)
 a boundary layer. This subsection introduces the finite-sample problem in which the layer is easiest
 to see, explains why the layer appears, measures how thick it is, and uses this
 measurement to predict how the conductivity measured on a finite sample converges to
@@ -815,8 +808,8 @@ flux,
   \label{eq:Kapp}
   \kappa^{\mathrm{app}}_{ij} = \frac{1}{|\Omega|} \int_{\Omega_{\mathrm{solid}}} \kappa\, \partial_i u_j \; dx ,
 \end{equation}
-normalized, like $\kappa^{\star}$, by the full area $|\Omega|$. This affine problem is also
-the cleanest setting in which to see the boundary layer.
+normalized, like $\kappa^{\star}$, by the full area $|\Omega|$. The boundary layer will affect this quantity directly, 
+because the flux is integrated over the whole sample, including the layer.
 
 \paragraph{Why a layer appears.} With the affine data $u = x_j$, the macroscopic
 solution is exactly $T = x_j$. The reconstruction
