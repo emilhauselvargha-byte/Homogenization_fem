@@ -14,7 +14,7 @@ asymptotic expansion predicts.
   <img src="figures/homogenization_error.png" width="62%" alt="Error of the macroscopic field and of the two-scale reconstruction against the DNS, versus cell size">
 </p>
 
-The full write-up is in [`report/homogenization_report.tex`](report/homogenization_report.tex).
+The full write-up is in [`report/homogenization_report.pdf`](report/homogenization_report.pdf), with its LaTeX source next to it.
 
 ## The method in brief
 
